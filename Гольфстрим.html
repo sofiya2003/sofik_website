@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гольфстрим</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <h1>Гольфстрим</h1>
+        <nav>
+            <ul>
+                <li><button onclick="showSection('shop')">Магазин</button></li>
+                <li><button onclick="showSection('cart')" id="cartBtn">Корзина (0)</button></li>
+                <li><button onclick="showSection('about')">О нас</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="shop">
+        <h2>Магазин</h2>
+        <div id="product-list" style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+            <div class="product">
+                <img src="product1.jpg" alt="Товар 1">
+                <p>Товар 1 - 100</p>
+                <button onclick="addToCart('Товар 1', 100, 'product1.jpg')">Добавить в корзину</button>
+            </div>
+            <div class="product">
+                <img src="product2.jpg" alt="Товар 2">
+                <p>Товар 2 - 200</p>
+                <button onclick="addToCart('Товар 2', 200, 'product2.jpg')">Добавить в корзину</button>
+            </div>
+            <div class="product">
+                <img src="product3.jpg" alt="Товар 3">
+                <p>Товар 3 - 300</p>
+                <button onclick="addToCart('Товар 3', 300, 'product3.jpg')">Добавить в корзину</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="cart" style="display:none;">
+        <h2>Корзина</h2>
+        <ul id="cart-list"></ul>
+        <p>Итого: <span id="total-price">0</span></p>
+    </section>
+
+    <section id="about" style="display:none;">
+        <h2>О нас</h2>
+        <p>Мы стремимся предоставить лучший сервис и качественные товары.</p>
+        <p>Найти нас можно на Google Maps: <a href="https://maps.app.goo.gl/WPG8u1t7v8ZV4SaQA" target="_blank">Наша локация</a></p>
+    </section>
+
+    <script>
+        let cart = [];
+        let total = 0;
+        let cartCount = 0;
+
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        function addToCart(name, price, image) {
+            let existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, price, image, quantity: 1 });
+            }
+
+            total += price;
+            cartCount++;
+            updateCart();
+            showSection('cart'); // Switch to cart after adding a product
+        }
+
+        function updateCart() {
+            document.getElementById('cart-list').innerHTML = '';
+            cart.forEach(item => {
+                let li = document.createElement('li');
+                li.innerHTML = `<img src="${item.image}" width="50"> ${item.name} - ${item.price} x ${item.quantity} 
+                                <button onclick="removeFromCart('${item.name}')">❌</button>`;
+                document.getElementById('cart-list').appendChild(li);
+            });
+            document.getElementById('total-price').innerText = total;
+            document.getElementById('cartBtn').innerText = `Корзина (${cartCount})`;
+        }
+
+        function removeFromCart(name) {
+            let itemIndex = cart.findIndex(item => item.name === name);
+            if (itemIndex !== -1) {
+                let item = cart[itemIndex];
+                total -= item.price * item.quantity;
+                cartCount -= item.quantity;
+                cart.splice(itemIndex, 1);
+            }
+            updateCart();
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: rgba(61, 66, 221, 0.479);
+        }
+        header { 
+            background-image: url('https://www.thoughtco.com/thmb/f3zl9if8DAWfzGiFqy_J0S7MDi8=/768x0/filters:no_upscale():max_bytes(150000):strip_icc()/172350144-56a2acfc5f9b58b7d0cd4d23.jpg'); 
+            background-size: cover; 
+            background-position: center;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li button {
+            background-color: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        nav ul li button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .product {
+            display: inline-block;
+            margin: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .product img {
+            width: 150px;
+            height: auto;
+        }
+        #product-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+    </style>
+</body>
+</html>
+
